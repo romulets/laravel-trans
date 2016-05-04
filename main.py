@@ -79,10 +79,10 @@ for filename in matches:
 				filemapper['-'.join(keys)] = row
 
 	except AttributeError as e:
-		print('File ' + filename + ' ERRO: ' + str(e))
+		print('File ' + filename + ' ERROR: ' + str(e))
 		continue
 	except UnicodeError as e:
-		print('File ' + filename + ' ERRO: ' + str(e))
+		print('File ' + filename + ' ERROR: ' + str(e))
 		continue
 
 	mapperPath = filename.replace(args.from_path,'').replace('.blade.php','').replace('/','\\').strip()
