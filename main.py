@@ -15,7 +15,7 @@ args = parser.parse_args()
 	
 
 # main scope
-main_exp = re.compile(r'<(?!(?:script)|(?:img)|(?:input))[a-z]+[^>]*>([^<>]+)<\/[a-z]+>')
+main_exp = re.compile(r'<(?!(?:script)|(?:img)|(?:input))[a-z0-9]+[^>]*>([^<>]+)<\/[a-z0-9]+>')
 not_exp = re.compile('(@[a-z-A-Z0-9]+(\((.)*\))?)|({{.*}})')
 
 try:
