@@ -30,7 +30,7 @@ class array:
             self.__value = value
 
     def __str__(self):
-        if type(self.__value) is serialize:
+        if type(self.__value) is not str and type(self.__value) is not unicode:
             return "'" + self.__key + "' => " + str(self.__value)
         else:
             return "'" + self.__key + "' => '" + str(self.__value).replace("'", "\\'") + "'"

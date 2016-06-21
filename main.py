@@ -1,14 +1,17 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# encoding=utf8  
 
 # imports
 from slugify import slugify
+# from unidecode import unidecode
 import fnmatch
 import os
 import argparse
 import re
 import json
 import php
+import sys
+import unicodedata
 
 # header of file to get args
 parser = argparse.ArgumentParser(description='Create translator files for laravel.')
@@ -21,11 +24,14 @@ args = parser.parse_args()
 main_exp = re.compile(r'<(?!(?:script)|(?:img)|(?:input))[a-z0-9]+[^>]*>([^<>]+)<\/[a-z0-9]+>')
 not_exp = re.compile('(@[a-z-A-Z0-9]+(\((.)*\))?)|({{.*}})')
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 try:
     to_file = open(args.destiny + '.map', 'r')
     mapper = json.loads(to_file.read())
     to_file.close()
-except ValueError and FileNotFoundError:
+except ValueError and IOError:
     mapper = {}
 
 
@@ -67,7 +73,7 @@ for filename in matches:
     filemapper = {}
 
     try:
-        file_content = file.read()
+        file_content = file.read().decode("utf-8")
         file.close()
         search = main_exp.findall(file_content)
         for row in search:
@@ -78,6 +84,7 @@ for filename in matches:
                 keys = row.split(' ')
                 keys = list(filter(lambda word: len(word.replace('-', '').replace('*', '').strip()) > 0, keys))
                 keys = keys[:6]
+                keys = list(map(unicode, keys))
                 keys = list(map(slugify, keys))
 
                 filemapper['-'.join(keys)] = row
@@ -88,12 +95,16 @@ for filename in matches:
     except UnicodeError as e:
         print('File ' + filename + ' ERROR: ' + str(e))
         continue
+    except TypeError as e:
+        print('File ' + filename + ' ERROR: ' + str(e))
+        continue
 
     mapperPath = filename.replace(args.from_path, '').replace('.blade.php', '').replace('/', '\\').strip()
     if mapperPath[0] == '\\':
         mapperPath = mapperPath[1:]
 
     mapperPath = mapperPath.split('\\')
+    mapperPath = list(map(unicode, mapperPath))
     mapperPath = list(map(slugify, mapperPath))
 
     add_to_mapper(mapper, mapperPath, filemapper)
